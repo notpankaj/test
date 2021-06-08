@@ -1,0 +1,9 @@
+{
+    "name": "asd/15_autoloading",
+    "require": {},
+    "autoload": {
+        "psr-4" : {
+            "app\\": "./app"
+        }
+    }
+}
