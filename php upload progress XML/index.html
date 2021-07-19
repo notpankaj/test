@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Document</title>
+  </head>
+  <style>
+    .progress-bar {
+      height: 35px;
+      width: 250px;
+      border: 2px solid blue;
+    }
+    .progress-bar-fill {
+      height: 100%;
+      width: 0%;
+      background: lightblue;
+      display: grid;
+      place-items: center;
+      transition: width 0.25s ease;
+    }
+    .progress-bar-text {
+      font-weight: bold;
+      margin-left: 10px;
+    }
+  </style>
+
+  <body>
+    <form method="post">
+      <input type="file" name="file" /> <br />
+      <button type="submit" value="upload">submit</button>
+    </form>
+    <div class="progress-bar">
+      <div class="progress-bar-fill">
+        <span class="progress-bar-text">0%</span>
+      </div>
+    </div>
+  </body>
+</html>
+
+<script>
+  const form = document.querySelector("form");
+  const input = document.querySelector("input");
+  const progressBarFill = document.querySelector(".progress-bar-fill");
+  const progressBarText = document.querySelector(".progress-bar-text");
+
+  function uploadFile(e) {
+    e.preventDefault();
+    const data = new FormData(form);
+
+    const xhr = new XMLHttpRequest();
+    xhr.open("POST", "upload.php");
+
+    xhr.upload.addEventListener("progress", (e) => {
+      const percent = e.lengthComputable ? (e.loaded / e.total) * 100 : 0;
+      if (percent == 100) {
+        progressBarFill.style.background = "green";
+      }
+      progressBarFill.style.width = percent.toFixed(2) + "%";
+      progressBarText.innerHTML = percent.toFixed(2) + "%";
+    });
+    xhr.onload = function () {
+      if (xhr.readyState === xhr.DONE) {
+        if (xhr.status === 200) {
+          console.log(xhr.response);
+          console.log(xhr.responseText);
+        }
+      }
+    };
+    xhr.send(new FormData(form));
+
+    // fetch("upload.php", {
+    //   method: "post",
+    //   body: data,
+    // })
+    //   .then(function (res) {
+    //     return res.text();
+    //   })
+    //   .then(function (text) {
+    //     console.log(text);
+    //   })
+    //   .catch((err) => console.log(err));
+  }
+
+  form.addEventListener("submit", uploadFile);
+</script>
